@@ -87,21 +87,19 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 
 ### Database paths (pre-configured at Sanger)
 
-| Parameter                | Default path                                                     |
-|--------------------------|------------------------------------------------------------------|
-| `--annotation_bakta_db`  | `/data/pam/software/bakta/v6.0`                                  |
-| `--arg_abricate_db`      | `/data/pam/software/abricate/db/`                                |
-| `--arg_amrfinderplus_db` | `/data/pam/software/amrfinder/latest/`                           |
-| `--eggnog_data_dir`      | `/data/pam/software/eggnog/v5.0/`                                |
-| `--dbcan_db`             | `/data/pam/software/run_dbcan/5.2.5/db/`                         |
-| `--vfdb_db`              | Path to pre-built VFDB diamond database (`VFDB_setB_pro.dmnd`)   |
+| Parameter                | Default path                                                                  |
+|--------------------------|-------------------------------------------------------------------------------|
+| `--annotation_bakta_db`  | `/data/pam/software/bakta/v6.0`                                               |
+| `--arg_abricate_db`      | `/data/pam/software/abricate/db/`                                             |
+| `--arg_amrfinderplus_db` | `/data/pam/software/amrfinder/latest/`                                        |
+| `--eggnog_data_dir`      | `/data/pam/software/eggnog/v5.0/`                                             |
+| `--dbcan_db`             | `/data/pam/software/run_dbcan/5.2.5/db/`                                      |
+| `--vfdb_db`              | `/data/pam/team230/sd28/scratch/secondment_162/dbs/vfdb/VFDB_setB_pro.dmnd`   |
 
 ### Key thresholds
 
 | Parameter               | Default   | Description                          |
 |-------------------------|-----------|--------------------------------------|
-| `--mmseqs_min_id`       | `0.8`     | MMseqs2 minimum sequence identity    |
-| `--mmseqs_min_cov`      | `0.9`     | MMseqs2 minimum coverage             |
 | `--module_completeness` | `0.5`     | KEGG module completeness threshold   |
 | `--kofamscan_eval`      | `0.00001` | KofamScan e-value cutoff             |
 | `--vfdb_identity`       | `50`      | VFDB minimum identity (%)            |
@@ -109,6 +107,8 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 | `--vfdb_e_value`        | `1e-10`   | VFDB e-value cutoff                  |
 | `--cazyme_hmm_eval`     | `1e-15`   | dbCAN HMM e-value cutoff             |
 | `--cazyme_hmm_cov`      | `0.35`    | dbCAN HMM minimum coverage           |
+| `--mmseqs_min_id`       | `0.8`     | MMseqs2 minimum sequence identity    |
+| `--mmseqs_min_cov`      | `0.9`     | MMseqs2 minimum coverage             |
 
 ---
 
