@@ -10,6 +10,8 @@ process DBCAN {
     path "versions.yml"                     , emit: versions
 
     script:
+    def eval_override = params.cazyme_hmm_eval ? "--hmmevalue ${params.cazyme_hmm_eval}" : ''
+    def cov_override  = params.cazyme_hmm_cov  ? "--hmmcov ${params.cazyme_hmm_cov}"  : ''
     """
     run_dbcan \\
         CAZyme_annotation \\
@@ -17,7 +19,9 @@ process DBCAN {
         --output_dir dbcan \\
         --threads ${task.cpus} \\
         --db_dir ${params.dbcan_db} \\
-        --mode protein
+        --mode protein \\
+        ${eval_override} \\
+        ${cov_override}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -44,14 +48,17 @@ process RUNDBCAN_EASYSUBSTRATE {
     path  "versions.yml"                                             , emit: versions
 
     script:
+    def eval_override = params.cazyme_hmm_eval ? "--hmmevalue ${params.cazyme_hmm_eval}" : ''
+    def cov_override  = params.cazyme_hmm_cov  ? "--hmmcov ${params.cazyme_hmm_cov}"  : ''
     """
-
     run_dbcan easy_substrate \\
         --mode protein \\
         --db_dir ${params.dbcan_db} \\
         --input_raw_data ${faa} \\
         --output_dir ${meta.ID}_dbcan \\
-        --input_gff ${gff}
+        --input_gff ${gff} \\
+        ${eval_override} \\
+        ${cov_override}
 
     mv ${meta.ID}_dbcan/substrate_prediction.tsv ${meta.ID}_substrate_prediction.tsv
     mv ${meta.ID}_dbcan/cgc_standard_out.tsv ${meta.ID}_cgc_standard_out.tsv

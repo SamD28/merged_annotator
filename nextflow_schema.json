@@ -55,13 +55,6 @@
                     "description": "Cluster proteins with MMseqs2 before functional annotation.",
                     "fa_icon": "fas fa-object-group",
                     "hidden": true
-                },
-                "run_drep": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "De-replicate genomes with dRep before annotation.",
-                    "fa_icon": "fas fa-filter",
-                    "hidden": true
                 }
             }
         },
@@ -118,32 +111,6 @@
                     "default": "/data/pam/software/kofam_scan/",
                     "description": "Path to the KofamScan HMM profile database directory.",
                     "fa_icon": "fas fa-folder"
-                }
-            }
-        },
-        "comparative_meta_options": {
-            "title": "Comparative / meta options",
-            "type": "object",
-            "fa_icon": "fas fa-layer-group",
-            "description": "Options for comparative and meta-analysis modes.",
-            "properties": {
-                "metacol": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Column name in manifest to use as metadata grouping for meta mode.",
-                    "fa_icon": "fas fa-columns"
-                },
-                "samplecol": {
-                    "type": "integer",
-                    "default": 1,
-                    "description": "Column index (1-based) in the manifest file containing sample identifiers.",
-                    "fa_icon": "fas fa-list-ol"
-                },
-                "kingdom": {
-                    "type": "string",
-                    "default": "bacteria",
-                    "description": "Kingdom for annotation context (used by Prokka and related tools).",
-                    "fa_icon": "fas fa-bacteria"
                 }
             }
         },
@@ -812,13 +779,6 @@
                     "hidden": true,
                     "enum": ["diamond", "hmmer", "mmseqs"]
                 },
-                "kofam_scan_mode": {
-                    "type": "string",
-                    "default": "hmmscan",
-                    "description": "KofamScan search mode.",
-                    "hidden": true,
-                    "enum": ["hmmscan", "hmmsearch"]
-                },
                 "kofamscan_eval": {
                     "type": "number",
                     "default": 0.00001,
@@ -845,36 +805,13 @@
                 },
                 "cazyme_hmm_eval": {
                     "type": "number",
-                    "default": 1e-15,
-                    "description": "E-value cutoff for dbCAN HMM CAZyme search.",
+                    "description": "E-value cutoff for dbCAN HMM CAZyme search (null = tool default).",
                     "hidden": true
                 },
                 "cazyme_hmm_cov": {
                     "type": "number",
-                    "default": 0.35,
-                    "description": "Minimum HMM coverage for dbCAN CAZyme hits.",
+                    "description": "Minimum HMM coverage for dbCAN CAZyme hits (null = tool default).",
                     "hidden": true
-                }
-            }
-        },
-        "drep_advanced": {
-            "title": "dRep advanced options",
-            "type": "object",
-            "fa_icon": "fas fa-sliders-h",
-            "description": "Fine-grained parameters for dRep genome de-replication.",
-            "properties": {
-                "drep_ignore_quality": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Ignore genome quality metrics during dRep de-replication.",
-                    "hidden": true
-                },
-                "drep_algorithm": {
-                    "type": "string",
-                    "default": "skani",
-                    "description": "Algorithm for dRep genome comparison.",
-                    "hidden": true,
-                    "enum": ["skani", "mash", "fastANI", "ANIn", "ANIm", "gANI"]
                 }
             }
         }
@@ -883,7 +820,6 @@
         { "$ref": "#/$defs/input_output_options" },
         { "$ref": "#/$defs/pipeline_mode" },
         { "$ref": "#/$defs/database_paths" },
-        { "$ref": "#/$defs/comparative_meta_options" },
         { "$ref": "#/$defs/output_behaviour" },
         { "$ref": "#/$defs/bakta_advanced" },
         { "$ref": "#/$defs/pyrodigal_advanced" },
@@ -896,7 +832,6 @@
         { "$ref": "#/$defs/deeparg_advanced" },
         { "$ref": "#/$defs/abricate_advanced" },
         { "$ref": "#/$defs/mmseqs2_advanced" },
-        { "$ref": "#/$defs/functional_annotation_advanced" },
-        { "$ref": "#/$defs/drep_advanced" }
+        { "$ref": "#/$defs/functional_annotation_advanced" }
     ]
 }

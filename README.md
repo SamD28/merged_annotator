@@ -35,7 +35,6 @@ For finished or high-quality draft isolate genomes.
 
 - Annotator: **Pyrodigal** (`-p single`, fast ORF prediction)
 - Protein clustering: off
-- Genome dereplication (dRep): off
 
 ```bash
 nextflow run main.nf -profile standard --mode single --manifest samples.csv
@@ -48,7 +47,6 @@ comparative/metagenomic dataset.
 
 - Annotator: **Pyrodigal** (`-p meta`, fast ORF prediction)
 - Protein clustering: on (MMseqs2 `easy-linclust` before functional annotation)
-- Genome dereplication (dRep): on
 
 ```bash
 nextflow run main.nf -profile standard --mode meta --manifest samples.csv
@@ -57,7 +55,7 @@ nextflow run main.nf -profile standard --mode meta --manifest samples.csv
 ### Direct tool selectors
 
 Pass the tool name as `--mode` to bypass the presets entirely. Pipeline-level switches
-(`cluster_proteome`, `run_drep`) remain at their defaults (off) unless you also set them.
+(`cluster_proteome`) remain at their defaults (off) unless you also set them.
 
 | `--mode`     | Annotator | `-p` flag   |
 |--------------|-----------|-------------|
@@ -68,10 +66,10 @@ Pass the tool name as `--mode` to bypass the presets entirely. Pipeline-level sw
 
 ```bash
 # Prokka with ARG screening
-nextflow run main.nf -profile standard --mode prokka --manifest samples.csv --arg_annotate true
+nextflow run main.nf -profile standard --mode prokka --manifest samples.csv --arg_annotate
 
-# Pyrodigal with protein clustering but no dRep
-nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv --cluster_proteome true
+# Pyrodigal with protein clustering
+nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv --cluster_proteome
 ```
 
 ---
@@ -85,7 +83,6 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 | `--mode`               | `single`  | Run mode (see above)                                         |
 | `--arg_annotate`       | `false`   | Run ARG screening subworkflow                                |
 | `--cluster_proteome`   | `false`   | Cluster proteins with MMseqs2 before functional annotation   |
-| `--run_drep`           | `false`   | De-replicate genomes with dRep before annotation             |
 | `--kofam_db`           | `null`    | Path to KofamScan HMM database                               |
 
 ### Database paths (pre-configured at Sanger)
@@ -103,8 +100,6 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 
 | Parameter               | Default   | Description                          |
 |-------------------------|-----------|--------------------------------------|
-| `--drep_ani`            | `0.995`   | ANI threshold for dRep dereplication |
-| `--drep_cov`            | `0.3`     | Coverage threshold for dRep          |
 | `--mmseqs_min_id`       | `0.8`     | MMseqs2 minimum sequence identity    |
 | `--mmseqs_min_cov`      | `0.9`     | MMseqs2 minimum coverage             |
 | `--module_completeness` | `0.5`     | KEGG module completeness threshold   |
@@ -114,17 +109,6 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 | `--vfdb_e_value`        | `1e-10`   | VFDB e-value cutoff                  |
 | `--cazyme_hmm_eval`     | `1e-15`   | dbCAN HMM e-value cutoff             |
 | `--cazyme_hmm_cov`      | `0.35`    | dbCAN HMM minimum coverage           |
-
----
-
-## Overriding mode defaults
-
-Any parameter set on the command line takes precedence over the mode preset. For example,
-to run `meta` mode without dereplication:
-
-```bash
-nextflow run main.nf -profile standard --mode meta --manifest samples.csv --run_drep false
-```
 
 ---
 
@@ -139,29 +123,29 @@ needed — no need to edit the file directly.
 When using a direct tool selector (`--mode pyrodigal`, `--mode prodigal`, `--mode bakta`)
 the tools default to single-genome mode. Use the corresponding flag to force meta mode:
 
-| `--mode`    | Override flag                          | Effect    |
-|-------------|----------------------------------------|-----------|
-| `pyrodigal` | `--annotation_pyrodigal_meta true`     | `-p meta` |
-| `prodigal`  | `--annotation_prodigal_meta true`      | `-p meta` |
-| `bakta`     | `--annotation_bakta_meta true`         | `--meta`  |
+| `--mode`    | Override flag                     | Effect    |
+|-------------|-----------------------------------|-----------|
+| `pyrodigal` | `--annotation_pyrodigal_meta`     | `-p meta` |
+| `prodigal`  | `--annotation_prodigal_meta`      | `-p meta` |
+| `bakta`     | `--annotation_bakta_meta`         | `--meta`  |
 
 ```bash
 nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv \
-    --annotation_pyrodigal_meta true
+    --annotation_pyrodigal_meta
 
 nextflow run main.nf -profile standard --mode bakta --manifest samples.csv \
-    --annotation_bakta_meta true
+    --annotation_bakta_meta
 ```
 
 ### Enabling/disabling individual ARG tools
 
-When `--arg_annotate true`, all five tools run by default. Skip individual ones:
+When `--arg_annotate`, all five tools run by default. Skip individual ones:
 
 ```bash
 nextflow run main.nf -profile standard --mode single --manifest samples.csv \
-    --arg_annotate true \
-    --arg_skip_deeparg true \
-    --arg_skip_fargene true
+    --arg_annotate \
+    --arg_skip_deeparg \
+    --arg_skip_fargene
 ```
 
 ---
@@ -177,7 +161,7 @@ results/
     dbcan/
     vfdb/
     eggnogmapper/
-  arg/                       # only when --arg_annotate true
+  arg/                       # only when --arg_annotate
     amrfinderplus/<sample_id>/
     abricate/<sample_id>/
     rgi/<sample_id>/
@@ -185,7 +169,7 @@ results/
     fargene/<sample_id>/
     hamronization/
     argnorm/
-  mmseqs/                    # only when --cluster_proteome true
+  mmseqs/                    # only when --cluster_proteome
   reports/
     hamronization_summarize/
 ```
