@@ -253,7 +253,7 @@
                 "annotation_bakta_skipsorf": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Perform sORF prediction.",
+                    "description": "Skip sORF prediction.",
                     "hidden": true
                 },
                 "annotation_bakta_gap": {
