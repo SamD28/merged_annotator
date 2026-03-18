@@ -60,9 +60,10 @@ process RUNDBCAN_EASYSUBSTRATE {
         ${eval_override} \\
         ${cov_override}
 
-    mv ${meta.ID}_dbcan/substrate_prediction.tsv ${meta.ID}_substrate_prediction.tsv
-    mv ${meta.ID}_dbcan/cgc_standard_out.tsv ${meta.ID}_cgc_standard_out.tsv
-    mv ${meta.ID}_dbcan/cgc_standard_out_summary.tsv ${meta.ID}_cgc_standard_out_summary.tsv
+    # cp rather than move so it caches
+    cp ${meta.ID}_dbcan/substrate_prediction.tsv ${meta.ID}_substrate_prediction.tsv
+    cp ${meta.ID}_dbcan/cgc_standard_out.tsv ${meta.ID}_cgc_standard_out.tsv
+    cp ${meta.ID}_dbcan/cgc_standard_out_summary.tsv ${meta.ID}_cgc_standard_out_summary.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
