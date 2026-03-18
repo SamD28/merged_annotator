@@ -1,11 +1,15 @@
 process KOFAMSCAN {
+    tag "${meta.ID}"
+
+    label 'process_medium'
+    
     container 'quay.io/biocontainers/kofamscan:1.3.0--hdfd78af_2'
 
     input:
-    path(all_seqs)
+    tuple val(meta), path(faa)
 
     output:
-    path("kofamscan_result.tsv")
+    tuple val(meta), path("kofamscan_result.tsv")
 
     script:
     """
@@ -16,6 +20,6 @@ process KOFAMSCAN {
         --profile ${params.kofam_db}/profiles/prokaryote.hal \\
         --ko-list ${params.kofam_db}/ko_list \\
         -f mapper \\
-        ${all_seqs}
+        ${faa}
     """
 }

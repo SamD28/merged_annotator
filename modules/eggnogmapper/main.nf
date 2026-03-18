@@ -1,4 +1,6 @@
 process EGGNOGMAPPER {
+    tag "${meta.ID}"
+    
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
@@ -7,19 +9,19 @@ process EGGNOGMAPPER {
         'biocontainers/eggnog-mapper:2.1.13--pyhdfd78af_2' }"
 
     input:
-    path(fasta)
+    tuple val(meta), path(fasta)
 
     output:
-    path("*.emapper.annotations")   , emit: annotations
-    path("*.emapper.seed_orthologs"), emit: orthologs, optional: true
-    path("*.emapper.hits")          , emit: hits     , optional: true
+    tuple val(meta), path("*.emapper.annotations")   , emit: annotations
+    tuple val(meta), path("*.emapper.seed_orthologs"), emit: orthologs, optional: true
+    tuple val(meta), path("*.emapper.hits")          , emit: hits     , optional: true
     tuple val("${task.process}"), val('eggnog-mapper'), eval("emapper.py --version 2>&1 | grep -o 'emapper-[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+' | sed 's/emapper-//'"), topic: versions, emit: versions_eggnogmapper
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def prefix        = "clustered"
+    def prefix        = task.ext.prefix ?: "${meta.ID}"
     def args          = task.ext.args   ?: ''
     def is_compressed = fasta.extension == '.gz'
     def fasta_name    = is_compressed ? fasta.baseName : "$fasta"
@@ -44,7 +46,7 @@ process EGGNOGMAPPER {
     """
 
     stub:
-    def prefix = "clustered"
+    def prefix = task.ext.prefix ?: "${meta.ID}"
     """
     echo $args
 

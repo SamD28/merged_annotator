@@ -1,5 +1,5 @@
 {
-    "$schema": "https://nf-schema.nf-co.re/nextflow_schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "Merged Annotator pipeline parameters",
     "description": "making the most of annotation tools available",
     "type": "object",
@@ -109,6 +109,7 @@
                 },
                 "vfdb_db": {
                     "type": "string",
+                    "default": "/data/pam/team230/sd28/scratch/secondment_162/dbs/vfdb/VFDB_setB_pro.dmnd",
                     "description": "Path to the VFDB virulence factor DIAMOND database (.dmnd).",
                     "fa_icon": "fas fa-file"
                 },

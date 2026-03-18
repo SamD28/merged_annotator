@@ -10,6 +10,10 @@ workflow {
     log.info paramsSummaryLog(workflow)
 
     validateParameters()
+
+    if (params.cluster_proteome)   {
+        error "Clustering of proteomes is currently not supported and under development. Please set --cluster_proteome to false."
+    }
     
     ch_input_for_annotation =  MANIFEST_PARSE(params.manifest)
     
@@ -17,11 +21,11 @@ workflow {
 
     ch_new_annotation = ch_input_for_annotation
             .join(ANNOTATION.out.faa)
-            .join(ANNOTATION.out.gbk)
-            .multiMap { meta, fasta, faa, gbk ->
+            .join(ANNOTATION.out.gff)
+            .multiMap { meta, fasta, faa, gff ->
                 fastas: [meta, fasta]
                 faas: [meta, faa]
-                gbks: [meta, gbk]
+                gffs: [meta, gff]
             }
 
     if (params.arg_annotate) {
@@ -32,6 +36,9 @@ workflow {
     }
 
     if (params.func_annotate) {
-        FUNC(ch_new_annotation.faas)
+        FUNC(
+            ch_new_annotation.faas,
+            ch_new_annotation.gffs,
+        )
     }
 }

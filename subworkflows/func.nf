@@ -1,20 +1,22 @@
 #!/usr/bin/env nextflow
 
 include { CLUSTER_SEQS;
-          ALIGNMENT_SCORE  } from '../modules/mmseqs/cluster/main'
-include { KOFAMSCAN        } from '../modules/kofamscan/annotate/main'
-include { EGGNOGMAPPER     } from '../modules/eggnogmapper/main'
-include { DBCAN            } from '../modules/dbcan/main'
-include { VFDB             } from '../modules/vfdb/main'
+          ALIGNMENT_SCORE               } from '../modules/mmseqs/cluster/main'
+include { KOFAMSCAN                     } from '../modules/kofamscan/annotate/main'
+include { EGGNOGMAPPER                  } from '../modules/eggnogmapper/main'
+include { DBCAN; RUNDBCAN_EASYSUBSTRATE } from '../modules/dbcan/main'
+include { VFDB                          } from '../modules/vfdb/main'
 
 workflow FUNC {
     take:
-    annotation_results
+    annotation_faas
+    annotation_gffs
 
     main:
 
     if ( params.cluster_proteome ) {
-        collected_proteins = annotation_results
+        /*
+        collected_proteins = annotation_faas
             .map{ _meta, faa -> faa}
             .collectFile( name: 'all_proteins.faa', newLine: true )
             
@@ -30,16 +32,20 @@ workflow FUNC {
         ALIGNMENT_SCORE(db_path)
 
         annotation_ready = cluster_ch.rep_seq
+        */
     } else {
-        annotation_ready = annotation_results
-                        .map{ _meta, faa -> faa}
+        annotation_ready = annotation_faas
+                        .map{ meta, faa -> faa}
     }
 
-    kofamscan_result  = KOFAMSCAN(annotation_ready)
+    annotation_faas
+    | KOFAMSCAN & EGGNOGMAPPER & VFDB
 
-    eggnog_result     = EGGNOGMAPPER(annotation_ready)
+    if ( params.mode == 'single' || params.mode == 'pyrodigal' || params.mode == 'bakta' || params.mode == 'prokka') {
+        linked_annotations = annotation_faas.join(annotation_gffs)
 
-    dbcan_result      = DBCAN(annotation_ready)
-
-    vfdb_result       = VFDB(annotation_ready)
+        RUNDBCAN_EASYSUBSTRATE(linked_annotations)
+    } else {
+        DBCAN(annotation_faas)
+    }
     }

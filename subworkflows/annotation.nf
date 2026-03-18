@@ -12,7 +12,7 @@ include { GUNZIP as GUNZIP_PRODIGAL_FAA  } from '../modules/gunzip/main'
 include { GUNZIP as GUNZIP_PRODIGAL_GBK  } from '../modules/gunzip/main'
 include { GUNZIP as GUNZIP_PYRODIGAL_FNA } from '../modules/gunzip/main'
 include { GUNZIP as GUNZIP_PYRODIGAL_FAA } from '../modules/gunzip/main'
-include { GUNZIP as GUNZIP_PYRODIGAL_GBK } from '../modules/gunzip/main'
+include { GUNZIP as GUNZIP_PYRODIGAL_GFF } from '../modules/gunzip/main'
 
 workflow ANNOTATION {
     take:
@@ -32,14 +32,15 @@ workflow ANNOTATION {
         PYRODIGAL(fasta, params.annotation_pyrodigal_output_format)
         GUNZIP_PYRODIGAL_FAA(PYRODIGAL.out.faa)
         GUNZIP_PYRODIGAL_FNA(PYRODIGAL.out.fna)
-        GUNZIP_PYRODIGAL_GBK(PYRODIGAL.out.annotations)
+        GUNZIP_PYRODIGAL_GFF(PYRODIGAL.out.annotations)
         ch_versions = ch_versions.mix(PYRODIGAL.out.versions)
         ch_versions = ch_versions.mix(GUNZIP_PYRODIGAL_FAA.out.versions)
         ch_versions = ch_versions.mix(GUNZIP_PYRODIGAL_FNA.out.versions)
-        ch_versions = ch_versions.mix(GUNZIP_PYRODIGAL_GBK.out.versions)
+        ch_versions = ch_versions.mix(GUNZIP_PYRODIGAL_GFF.out.versions)
         ch_annotation_faa = GUNZIP_PYRODIGAL_FAA.out.gunzip
         ch_annotation_fna = GUNZIP_PYRODIGAL_FNA.out.gunzip
-        ch_annotation_gbk = GUNZIP_PYRODIGAL_GBK.out.gunzip
+        ch_annotation_gbk = channel.empty() // prodigal doesn't produce gbk output in this channel todo FIX
+        ch_annotation_gff = GUNZIP_PYRODIGAL_GFF.out.gunzip
     }
     else if (tool == "prodigal") {
         PRODIGAL(fasta, params.annotation_prodigal_output_format)
@@ -53,6 +54,7 @@ workflow ANNOTATION {
         ch_annotation_faa = GUNZIP_PRODIGAL_FAA.out.gunzip
         ch_annotation_fna = GUNZIP_PRODIGAL_FNA.out.gunzip
         ch_annotation_gbk = GUNZIP_PRODIGAL_GBK.out.gunzip
+        ch_annotation_gff = channel.empty() // prodigal doesn't produce gff output
     }
     else if (tool == "prokka") {
         PROKKA(fasta, [], [])
@@ -61,6 +63,7 @@ workflow ANNOTATION {
         ch_annotation_faa = PROKKA.out.faa
         ch_annotation_fna = PROKKA.out.fna
         ch_annotation_gbk = PROKKA.out.gbk
+        ch_annotation_gff = PROKKA.out.gff
     }
     else if (tool == "bakta") {
         // BAKTA prepare download
@@ -81,6 +84,7 @@ workflow ANNOTATION {
         ch_annotation_faa = BAKTA_BAKTA.out.faa
         ch_annotation_fna = BAKTA_BAKTA.out.fna
         ch_annotation_gbk = BAKTA_BAKTA.out.gbff
+        ch_annotation_gff = BAKTA_BAKTA.out.gff
     }
 
     emit:
@@ -89,4 +93,5 @@ workflow ANNOTATION {
     faa           = ch_annotation_faa // [ [meta], path(faa) ]
     fna           = ch_annotation_fna // [ [meta], path(fna) ]
     gbk           = ch_annotation_gbk // [ [meta], path(gbk) ]
+    gff           = ch_annotation_gff // [ [meta], path(gff) ] or empty if bakta not run
 }
