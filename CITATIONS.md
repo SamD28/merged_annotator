@@ -1,6 +1,6 @@
-# nf-core/funcscan: Citations
+# Merged_annotator
 
-## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
+## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/) for modules relating to ARG and initial annotation
 
 > Ewels, P. A., Peltzer, A., Fillinger, S., Patel, H., Alneberg, J., Wilm, A., Garcia, M. U., Di Tommaso, P., & Nahnsen, S. (2020). The nf-core framework for community-curated bioinformatics pipelines. Nature biotechnology, 38(3), 276–278. [DOI: 10.1038/s41587-020-0439-x](https://doi.org/10.1038/s41587-020-0439-x)
 
@@ -9,6 +9,8 @@
 > Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature biotechnology, 35(4), 316–319. [DOI: 10.1038/nbt.3820](https://doi.org/10.1038/nbt.3820)
 
 ## Pipeline tools
+
+### Arg pipeline
 
 - [ABRicate](https://github.com/tseemann/abricate)
 
@@ -105,6 +107,8 @@
 - [SeqKit](https://bioinf.shenwei.me/seqkit/)
 
   > Shen, W., Sipos, B., & Zhao, L. (2024). SeqKit2: A Swiss army knife for sequence and alignment processing. iMeta, e191. [https://doi.org/10.1002/imt2.191](https://doi.org/10.1002/imt2.191)
+
+### Functional annotation pipeline
 
 ## Software packaging/containerisation tools
 
