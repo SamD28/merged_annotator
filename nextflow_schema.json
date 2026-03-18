@@ -1,0 +1,901 @@
+{
+    "$schema": "https://nf-schema.nf-co.re/nextflow_schema.json",
+    "title": "Merged Annotator pipeline parameters",
+    "description": "making the most of annotation tools available",
+    "type": "object",
+    "$defs": {
+        "input_output_options": {
+            "title": "Input/output options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Define where the pipeline should find input data and save output data.",
+            "required": ["manifest"],
+            "properties": {
+                "manifest": {
+                    "type": "string",
+                    "description": "Path to sample manifest file (TSV/CSV) listing genomes to annotate.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "outdir": {
+                    "type": "string",
+                    "description": "The output directory where results will be saved.",
+                    "default": "results",
+                    "fa_icon": "fas fa-folder-open"
+                }
+            }
+        },
+        "pipeline_mode": {
+            "title": "Pipeline mode",
+            "type": "object",
+            "fa_icon": "fas fa-cogs",
+            "description": "Select which annotation tools and subworkflows to run.",
+            "properties": {
+                "mode": {
+                    "type": "string",
+                    "default": "single",
+                    "description": "Primary annotation mode / tool to use.",
+                    "enum": ["single", "meta", "pyrodigal", "bakta", "prodigal", "prokka"],
+                    "fa_icon": "fas fa-tools"
+                },
+                "arg_annotate": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run ARG (antimicrobial resistance gene) screening subworkflow.",
+                    "fa_icon": "fas fa-shield-alt"
+                },
+                "func_annotate": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run functional annotation subworkflow (EggNOG, KofamScan, dbCAN, VFDB).",
+                    "fa_icon": "fas fa-dna"
+                },
+                "cluster_proteome": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Cluster proteins with MMseqs2 before functional annotation.",
+                    "fa_icon": "fas fa-object-group",
+                    "hidden": true
+                },
+                "run_drep": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "De-replicate genomes with dRep before annotation.",
+                    "fa_icon": "fas fa-filter",
+                    "hidden": true
+                }
+            }
+        },
+        "database_paths": {
+            "title": "Database paths",
+            "type": "object",
+            "fa_icon": "fas fa-database",
+            "description": "Paths to reference databases used by annotation tools.",
+            "properties": {
+                "annotation_bakta_db": {
+                    "type": "string",
+                    "default": "/data/pam/software/bakta/v6.0",
+                    "description": "Path to the Bakta annotation database directory.",
+                    "fa_icon": "fas fa-folder"
+                },
+                "arg_abricate_db": {
+                    "type": "string",
+                    "default": "/data/pam/software/abricate/db/",
+                    "description": "Path to the ABRicate database directory.",
+                    "fa_icon": "fas fa-folder"
+                },
+                "arg_abricate_db_id": {
+                    "type": "string",
+                    "default": "ncbi",
+                    "description": "ABRicate database identifier to use (e.g. ncbi, card, resfinder).",
+                    "fa_icon": "fas fa-tag"
+                },
+                "arg_amrfinderplus_db": {
+                    "type": "string",
+                    "default": "/data/pam/software/amrfinder/latest/",
+                    "description": "Path to the AMRFinderPlus database directory.",
+                    "fa_icon": "fas fa-folder"
+                },
+                "eggnog_data_dir": {
+                    "type": "string",
+                    "default": "/data/pam/software/eggnog/v5.0/",
+                    "description": "Path to the EggNOG-mapper data directory.",
+                    "fa_icon": "fas fa-folder"
+                },
+                "dbcan_db": {
+                    "type": "string",
+                    "default": "/data/pam/software/run_dbcan/5.2.5/db/",
+                    "description": "Path to the dbCAN CAZyme database directory.",
+                    "fa_icon": "fas fa-folder"
+                },
+                "vfdb_db": {
+                    "type": "string",
+                    "description": "Path to the VFDB virulence factor DIAMOND database (.dmnd).",
+                    "fa_icon": "fas fa-file"
+                },
+                "kofam_db": {
+                    "type": "string",
+                    "default": "/data/pam/software/kofam_scan/",
+                    "description": "Path to the KofamScan HMM profile database directory.",
+                    "fa_icon": "fas fa-folder"
+                }
+            }
+        },
+        "comparative_meta_options": {
+            "title": "Comparative / meta options",
+            "type": "object",
+            "fa_icon": "fas fa-layer-group",
+            "description": "Options for comparative and meta-analysis modes.",
+            "properties": {
+                "metacol": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Column name in manifest to use as metadata grouping for meta mode.",
+                    "fa_icon": "fas fa-columns"
+                },
+                "samplecol": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Column index (1-based) in the manifest file containing sample identifiers.",
+                    "fa_icon": "fas fa-list-ol"
+                },
+                "kingdom": {
+                    "type": "string",
+                    "default": "bacteria",
+                    "description": "Kingdom for annotation context (used by Prokka and related tools).",
+                    "fa_icon": "fas fa-bacteria"
+                }
+            }
+        },
+        "output_behaviour": {
+            "title": "Output behaviour",
+            "type": "object",
+            "fa_icon": "fas fa-save",
+            "description": "Fine-grained control over which files are published.",
+            "properties": {
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "copy",
+                    "description": "Method used to save pipeline results to the output directory.",
+                    "hidden": true,
+                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"]
+                },
+                "save_annotations": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Save annotation output files to the output directory.",
+                    "hidden": true
+                },
+                "save_db": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save database files used during the run.",
+                    "hidden": true
+                },
+                "save_intermediate": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save intermediate files produced during the run.",
+                    "hidden": true
+                }
+            }
+        },
+        "bakta_advanced": {
+            "title": "Bakta advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for Bakta annotation.",
+            "properties": {
+                "annotation_bakta_meta": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run Bakta in meta-genome mode.",
+                    "hidden": true
+                },
+                "annotation_bakta_db_downloadtype": {
+                    "type": "string",
+                    "default": "full",
+                    "description": "Bakta database download type (full or light).",
+                    "hidden": true,
+                    "enum": ["full", "light"]
+                },
+                "annotation_bakta_mincontiglen": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum contig length for Bakta annotation.",
+                    "hidden": true
+                },
+                "annotation_bakta_translationtable": {
+                    "type": "integer",
+                    "default": 11,
+                    "description": "Translation table number for Bakta.",
+                    "hidden": true
+                },
+                "annotation_bakta_gram": {
+                    "type": "string",
+                    "default": "?",
+                    "description": "Gram stain: '+', '-', or '?' for unknown.",
+                    "hidden": true
+                },
+                "annotation_bakta_complete": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Treat all sequences as complete replicons.",
+                    "hidden": true
+                },
+                "annotation_bakta_renamecontigheaders": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Rename contig headers to sequential IDs.",
+                    "hidden": true
+                },
+                "annotation_bakta_compliant": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Force Genbank/ENA/DDBJ compliant output.",
+                    "hidden": true
+                },
+                "annotation_bakta_trna": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip tRNA detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_tmrna": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip tmRNA detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_rrna": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip rRNA detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_ncrna": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip ncRNA detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_ncrnaregion": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip ncRNA region detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_crispr": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip CRISPR array detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_skipcds": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip CDS prediction.",
+                    "hidden": true
+                },
+                "annotation_bakta_pseudo": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip pseudogene detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_skipsorf": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip sORF prediction.",
+                    "hidden": true
+                },
+                "annotation_bakta_gap": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip gap detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_ori": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip origin of replication detection.",
+                    "hidden": true
+                },
+                "annotation_bakta_activate_plot": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Activate circular genome plot output.",
+                    "hidden": true
+                },
+                "annotation_bakta_hmms": {
+                    "type": "string",
+                    "description": "Path to additional user-provided HMM profiles for Bakta.",
+                    "hidden": true
+                }
+            }
+        },
+        "pyrodigal_advanced": {
+            "title": "Pyrodigal advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for Pyrodigal gene prediction.",
+            "properties": {
+                "annotation_pyrodigal_meta": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run Pyrodigal in meta mode (for short or metagenomic contigs).",
+                    "hidden": true
+                },
+                "annotation_pyrodigal_closed": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Treat sequences as closed (no partial genes at ends).",
+                    "hidden": true
+                },
+                "annotation_pyrodigal_transtable": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use specified translation table.",
+                    "hidden": true
+                },
+                "annotation_pyrodigal_forcenonsd": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Force Pyrodigal to bypass the Shine-Dalgarno trainer.",
+                    "hidden": true
+                },
+                "annotation_pyrodigal_star_stop": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Output genes with alternative start codons as stop codons.",
+                    "hidden": true
+                },
+                "annotation_pyrodigal_annotate_gaps": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Annotate gene models across sequence gaps.",
+                    "hidden": true
+                },
+                "annotation_pyrodigal_output_format": {
+                    "type": "string",
+                    "default": "gff",
+                    "description": "Output format for Pyrodigal predictions.",
+                    "hidden": true,
+                    "enum": ["gff", "gbk", "faa", "fna"]
+                }
+            }
+        },
+        "prodigal_advanced": {
+            "title": "Prodigal advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for Prodigal gene prediction.",
+            "properties": {
+                "annotation_prodigal_meta": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run Prodigal in meta mode.",
+                    "hidden": true
+                },
+                "annotation_prodigal_closed": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Treat sequences as closed.",
+                    "hidden": true
+                },
+                "annotation_prodigal_transtable": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use specified translation table.",
+                    "hidden": true
+                },
+                "annotation_prodigal_forcenonsd": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Force Prodigal to bypass the Shine-Dalgarno trainer.",
+                    "hidden": true
+                },
+                "annotation_prodigal_annotate_gaps": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Annotate gene models across sequence gaps.",
+                    "hidden": true
+                },
+                "annotation_prodigal_output_format": {
+                    "type": "string",
+                    "default": "gff",
+                    "description": "Output format for Prodigal predictions.",
+                    "hidden": true,
+                    "enum": ["gff", "gbk"]
+                }
+            }
+        },
+        "prokka_advanced": {
+            "title": "Prokka advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for Prokka annotation.",
+            "properties": {
+                "annotation_prokka_rawproduct": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Do not clean up /product annotation.",
+                    "hidden": true
+                },
+                "annotation_prokka_kingdom": {
+                    "type": "string",
+                    "default": "Bacteria",
+                    "description": "Annotation mode (Bacteria, Archaea, Mitochondria, Viruses).",
+                    "hidden": true
+                },
+                "annotation_prokka_gcode": {
+                    "type": "integer",
+                    "default": 11,
+                    "description": "Genetic code for Prokka translation.",
+                    "hidden": true
+                },
+                "annotation_prokka_cdsrnaolap": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Allow Prokka to annotate CDS/RNA overlaps.",
+                    "hidden": true
+                },
+                "annotation_prokka_rnammer": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use RNAmmer for rRNA prediction instead of Barrnap.",
+                    "hidden": true
+                },
+                "annotation_prokka_mincontiglen": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum contig length for Prokka annotation.",
+                    "hidden": true
+                },
+                "annotation_prokka_evalue": {
+                    "type": "number",
+                    "default": 0.000001,
+                    "description": "E-value cutoff for Prokka similarity searches.",
+                    "hidden": true
+                },
+                "annotation_prokka_coverage": {
+                    "type": "integer",
+                    "default": 80,
+                    "description": "Minimum coverage (%) for Prokka similarity searches.",
+                    "hidden": true
+                },
+                "annotation_prokka_compliant": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Force Genbank/ENA/DDBJ compliant Prokka output.",
+                    "hidden": true
+                },
+                "annotation_prokka_addgenes": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Add 'gene' features for each 'CDS' feature in Prokka output.",
+                    "hidden": true
+                },
+                "annotation_prokka_retaincontigheaders": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Do not rename FASTA headers in Prokka output.",
+                    "hidden": true
+                }
+            }
+        },
+        "arg_advanced": {
+            "title": "ARG screening advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Tool switches and output settings for ARG screening.",
+            "properties": {
+                "arg_skip_fargene": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip fARGene in the ARG screening subworkflow.",
+                    "hidden": true
+                },
+                "arg_skip_rgi": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip RGI in the ARG screening subworkflow.",
+                    "hidden": true
+                },
+                "arg_skip_amrfinderplus": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip AMRFinderPlus in the ARG screening subworkflow.",
+                    "hidden": true
+                },
+                "arg_skip_deeparg": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip DeepARG in the ARG screening subworkflow.",
+                    "hidden": true
+                },
+                "arg_skip_abricate": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip ABRicate in the ARG screening subworkflow.",
+                    "hidden": true
+                },
+                "arg_skip_argnorm": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip ARGnorm normalisation step.",
+                    "hidden": true
+                },
+                "arg_hamronization_summarizeformat": {
+                    "type": "string",
+                    "default": "tsv",
+                    "description": "Output format for hAMRonization summary report.",
+                    "hidden": true,
+                    "enum": ["tsv", "json", "interactive"]
+                }
+            }
+        },
+        "fargene_advanced": {
+            "title": "fARGene advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for fARGene.",
+            "properties": {
+                "arg_fargene_hmmmodel": {
+                    "type": "string",
+                    "default": "class_a,class_b_1_2,class_b_3,class_c,class_d_1,class_d_2,qnr,tet_efflux,tet_rpg,tet_enzyme",
+                    "description": "Comma-separated list of fARGene HMM models to use.",
+                    "hidden": true
+                },
+                "arg_fargene_savetmpfiles": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save fARGene temporary files.",
+                    "hidden": true
+                },
+                "arg_fargene_minorflength": {
+                    "type": "integer",
+                    "default": 90,
+                    "description": "Minimum ORF length for fARGene.",
+                    "hidden": true
+                },
+                "arg_fargene_score": {
+                    "type": "number",
+                    "description": "Minimum score threshold for fARGene (null = tool default).",
+                    "hidden": true
+                },
+                "arg_fargene_translationformat": {
+                    "type": "string",
+                    "default": "pearson",
+                    "description": "Translation format used by fARGene.",
+                    "hidden": true
+                },
+                "arg_fargene_orffinder": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use ORF finder in fARGene.",
+                    "hidden": true
+                }
+            }
+        },
+        "rgi_advanced": {
+            "title": "RGI advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for RGI (Resistance Gene Identifier).",
+            "properties": {
+                "arg_rgi_db": {
+                    "type": "string",
+                    "description": "Path to a custom RGI CARD database (null = bundled database).",
+                    "hidden": true
+                },
+                "arg_rgi_savejson": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save RGI JSON output.",
+                    "hidden": true
+                },
+                "arg_rgi_savetmpfiles": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save RGI temporary files.",
+                    "hidden": true
+                },
+                "arg_rgi_alignmenttool": {
+                    "type": "string",
+                    "default": "BLAST",
+                    "description": "Alignment tool for RGI (BLAST or DIAMOND).",
+                    "hidden": true,
+                    "enum": ["BLAST", "DIAMOND"]
+                },
+                "arg_rgi_includeloose": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include loose RGI hits in results.",
+                    "hidden": true
+                },
+                "arg_rgi_includenudge": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include nudge hits in RGI results.",
+                    "hidden": true
+                },
+                "arg_rgi_lowquality": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include low-quality RGI hits.",
+                    "hidden": true
+                },
+                "arg_rgi_data": {
+                    "type": "string",
+                    "default": "NA",
+                    "description": "RGI data type (NA, wgs, plasmid, chromosome, contig).",
+                    "hidden": true
+                },
+                "arg_rgi_split_prodigal_jobs": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Split Prodigal jobs within RGI for parallelisation.",
+                    "hidden": true
+                }
+            }
+        },
+        "amrfinderplus_advanced": {
+            "title": "AMRFinderPlus advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for AMRFinderPlus.",
+            "properties": {
+                "arg_amrfinderplus_identmin": {
+                    "type": "number",
+                    "default": -1,
+                    "description": "Minimum identity for AMRFinderPlus (-1 = tool default).",
+                    "hidden": true
+                },
+                "arg_amrfinderplus_coveragemin": {
+                    "type": "number",
+                    "default": 0.5,
+                    "description": "Minimum coverage for AMRFinderPlus hits.",
+                    "hidden": true
+                },
+                "arg_amrfinderplus_translationtable": {
+                    "type": "integer",
+                    "default": 11,
+                    "description": "Translation table for AMRFinderPlus.",
+                    "hidden": true
+                },
+                "arg_amrfinderplus_plus": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable AMRFinderPlus plus mode (stress, virulence genes).",
+                    "hidden": true
+                },
+                "arg_amrfinderplus_name": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Print organism name in AMRFinderPlus output.",
+                    "hidden": true
+                }
+            }
+        },
+        "deeparg_advanced": {
+            "title": "DeepARG advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for DeepARG.",
+            "properties": {
+                "arg_deeparg_db": {
+                    "type": "string",
+                    "description": "Path to a custom DeepARG database (null = download automatically).",
+                    "hidden": true
+                },
+                "arg_deeparg_db_version": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "DeepARG database version to use.",
+                    "hidden": true
+                },
+                "arg_deeparg_model": {
+                    "type": "string",
+                    "default": "LS",
+                    "description": "DeepARG model type (SS or LS).",
+                    "hidden": true,
+                    "enum": ["SS", "LS"]
+                },
+                "arg_deeparg_minprob": {
+                    "type": "number",
+                    "default": 0.8,
+                    "description": "Minimum probability threshold for DeepARG predictions.",
+                    "hidden": true
+                },
+                "arg_deeparg_alignmentidentity": {
+                    "type": "integer",
+                    "default": 50,
+                    "description": "Minimum alignment identity (%) for DeepARG.",
+                    "hidden": true
+                },
+                "arg_deeparg_alignmentevalue": {
+                    "type": "number",
+                    "default": 1e-10,
+                    "description": "Alignment e-value cutoff for DeepARG.",
+                    "hidden": true
+                },
+                "arg_deeparg_alignmentoverlap": {
+                    "type": "number",
+                    "default": 0.8,
+                    "description": "Minimum alignment overlap for DeepARG.",
+                    "hidden": true
+                },
+                "arg_deeparg_numalignmentsperentry": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Number of alignments per entry for DeepARG.",
+                    "hidden": true
+                }
+            }
+        },
+        "abricate_advanced": {
+            "title": "ABRicate advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for ABRicate.",
+            "properties": {
+                "arg_abricate_minid": {
+                    "type": "integer",
+                    "default": 80,
+                    "description": "Minimum identity (%) for ABRicate hits.",
+                    "hidden": true
+                },
+                "arg_abricate_mincov": {
+                    "type": "integer",
+                    "default": 80,
+                    "description": "Minimum coverage (%) for ABRicate hits.",
+                    "hidden": true
+                }
+            }
+        },
+        "mmseqs2_advanced": {
+            "title": "MMseqs2 advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for MMseqs2 proteome clustering.",
+            "properties": {
+                "mmseqs_clusterPrefix": {
+                    "type": "string",
+                    "default": "mmseqs_clustering",
+                    "description": "Prefix for MMseqs2 clustering output files.",
+                    "hidden": true
+                },
+                "mmseqs_tmpDir": {
+                    "type": "string",
+                    "default": "mmseqs_clustering",
+                    "description": "Temporary directory name for MMseqs2.",
+                    "hidden": true
+                },
+                "mmseqs_command": {
+                    "type": "string",
+                    "default": "easy-linclust",
+                    "description": "MMseqs2 clustering command to use.",
+                    "hidden": true,
+                    "enum": ["easy-linclust", "easy-cluster"]
+                },
+                "mmseqs_cov_mode": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "MMseqs2 coverage mode.",
+                    "hidden": true
+                },
+                "mmseqs_min_id": {
+                    "type": "number",
+                    "default": 0.8,
+                    "description": "Minimum sequence identity for MMseqs2 clustering.",
+                    "hidden": true
+                },
+                "mmseqs_min_cov": {
+                    "type": "number",
+                    "default": 0.9,
+                    "description": "Minimum coverage for MMseqs2 clustering.",
+                    "hidden": true
+                }
+            }
+        },
+        "functional_annotation_advanced": {
+            "title": "Functional annotation advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for EggNOG, KofamScan, VFDB, and dbCAN.",
+            "properties": {
+                "eggnog_search_mode": {
+                    "type": "string",
+                    "default": "diamond",
+                    "description": "EggNOG-mapper search mode.",
+                    "hidden": true,
+                    "enum": ["diamond", "hmmer", "mmseqs"]
+                },
+                "kofam_scan_mode": {
+                    "type": "string",
+                    "default": "hmmscan",
+                    "description": "KofamScan search mode.",
+                    "hidden": true,
+                    "enum": ["hmmscan", "hmmsearch"]
+                },
+                "kofamscan_eval": {
+                    "type": "number",
+                    "default": 0.00001,
+                    "description": "E-value threshold for KofamScan hits.",
+                    "hidden": true
+                },
+                "vfdb_identity": {
+                    "type": "integer",
+                    "default": 50,
+                    "description": "Minimum identity (%) for VFDB DIAMOND hits.",
+                    "hidden": true
+                },
+                "vfdb_coverage": {
+                    "type": "integer",
+                    "default": 80,
+                    "description": "Minimum query coverage (%) for VFDB hits.",
+                    "hidden": true
+                },
+                "vfdb_e_value": {
+                    "type": "number",
+                    "default": 1e-10,
+                    "description": "E-value cutoff for VFDB DIAMOND alignment.",
+                    "hidden": true
+                },
+                "cazyme_hmm_eval": {
+                    "type": "number",
+                    "default": 1e-15,
+                    "description": "E-value cutoff for dbCAN HMM CAZyme search.",
+                    "hidden": true
+                },
+                "cazyme_hmm_cov": {
+                    "type": "number",
+                    "default": 0.35,
+                    "description": "Minimum HMM coverage for dbCAN CAZyme hits.",
+                    "hidden": true
+                }
+            }
+        },
+        "drep_advanced": {
+            "title": "dRep advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-sliders-h",
+            "description": "Fine-grained parameters for dRep genome de-replication.",
+            "properties": {
+                "drep_ignore_quality": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Ignore genome quality metrics during dRep de-replication.",
+                    "hidden": true
+                },
+                "drep_algorithm": {
+                    "type": "string",
+                    "default": "skani",
+                    "description": "Algorithm for dRep genome comparison.",
+                    "hidden": true,
+                    "enum": ["skani", "mash", "fastANI", "ANIn", "ANIm", "gANI"]
+                }
+            }
+        }
+    },
+    "allOf": [
+        { "$ref": "#/$defs/input_output_options" },
+        { "$ref": "#/$defs/pipeline_mode" },
+        { "$ref": "#/$defs/database_paths" },
+        { "$ref": "#/$defs/comparative_meta_options" },
+        { "$ref": "#/$defs/output_behaviour" },
+        { "$ref": "#/$defs/bakta_advanced" },
+        { "$ref": "#/$defs/pyrodigal_advanced" },
+        { "$ref": "#/$defs/prodigal_advanced" },
+        { "$ref": "#/$defs/prokka_advanced" },
+        { "$ref": "#/$defs/arg_advanced" },
+        { "$ref": "#/$defs/fargene_advanced" },
+        { "$ref": "#/$defs/rgi_advanced" },
+        { "$ref": "#/$defs/amrfinderplus_advanced" },
+        { "$ref": "#/$defs/deeparg_advanced" },
+        { "$ref": "#/$defs/abricate_advanced" },
+        { "$ref": "#/$defs/mmseqs2_advanced" },
+        { "$ref": "#/$defs/functional_annotation_advanced" },
+        { "$ref": "#/$defs/drep_advanced" }
+    ]
+}

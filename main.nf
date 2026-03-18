@@ -1,3 +1,5 @@
+include { validateParameters; paramsSummaryLog } from 'plugin/nf-schema'
+
 include { MANIFEST_PARSE   } from './subworkflows/manifest_parse.nf'
 include { ANNOTATION       } from './subworkflows/annotation.nf'
 include { ARG              } from './subworkflows/arg.nf'
@@ -5,6 +7,10 @@ include { FUNC             } from './subworkflows/func.nf'
 
 workflow {
     main:
+    log.info paramsSummaryLog(workflow)
+
+    validateParameters()
+    
     ch_input_for_annotation =  MANIFEST_PARSE(params.manifest)
     
     ANNOTATION(ch_input_for_annotation)
