@@ -82,19 +82,20 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 | `--outdir`             | `results` | Output directory                                             |
 | `--mode`               | `single`  | Run mode (see above)                                         |
 | `--arg_annotate`       | `false`   | Run ARG screening subworkflow                                |
+| `--func_annotate`      | `false`   | Run Functional screening subworkflow                         |
 | `--cluster_proteome`   | `false`   | Cluster proteins with MMseqs2 before functional annotation   |
-| `--kofam_db`           | `null`    | Path to KofamScan HMM database                               |
 
 ### Database paths (pre-configured at Sanger)
 
 | Parameter                | Default path                                                                  |
 |--------------------------|-------------------------------------------------------------------------------|
-| `--annotation_bakta_db`  | `/data/pam/software/bakta/v6.0`                                               |
+| `--annotation_bakta_db`  | `/data/pam/software/bakta/v6.0/`                                               |
 | `--arg_abricate_db`      | `/data/pam/software/abricate/db/`                                             |
 | `--arg_amrfinderplus_db` | `/data/pam/software/amrfinder/latest/`                                        |
 | `--eggnog_data_dir`      | `/data/pam/software/eggnog/v5.0/`                                             |
 | `--dbcan_db`             | `/data/pam/software/run_dbcan/5.2.5/db/`                                      |
 | `--vfdb_db`              | `/data/pam/team230/sd28/scratch/secondment_162/dbs/vfdb/VFDB_setB_pro.dmnd`   |
+| `--kofam_db`             | `/data/pam/software/kofam_scan/`                                              |
 
 ### Key thresholds
 
@@ -114,9 +115,15 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 
 ## Advanced usage
 
-Fine-grained tool parameters (translation table, HMM thresholds, per-tool ARG flags etc.)
+Tool parameters (translation table, HMM thresholds, per-tool ARG flags etc.)
 are defined with sensible defaults in `conf/advanced.config`. Override them on the CLI as
 needed — no need to edit the file directly.
+
+To see a full list of these params use the --helpFull command
+
+```bash
+nextflow run main.nf --helpFull
+```
 
 ### Running annotation tools in meta mode via direct tool selector
 
