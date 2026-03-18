@@ -105,8 +105,8 @@ nextflow run main.nf -profile standard --mode pyrodigal --manifest samples.csv -
 | `--vfdb_identity`       | `50`      | VFDB minimum identity (%)            |
 | `--vfdb_coverage`       | `80`      | VFDB minimum subject coverage (%)    |
 | `--vfdb_e_value`        | `1e-10`   | VFDB e-value cutoff                  |
-| `--cazyme_hmm_eval`     | `1e-15`   | dbCAN HMM e-value cutoff             |
-| `--cazyme_hmm_cov`      | `0.35`    | dbCAN HMM minimum coverage           |
+| `--cazyme_hmm_eval`     | `default` | dbCAN HMM e-value cutoff             |
+| `--cazyme_hmm_cov`      | `default` | dbCAN HMM minimum coverage           |
 | `--mmseqs_min_id`       | `0.8`     | MMseqs2 minimum sequence identity    |
 | `--mmseqs_min_cov`      | `0.9`     | MMseqs2 minimum coverage             |
 
