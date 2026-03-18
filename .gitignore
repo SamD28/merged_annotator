@@ -1,0 +1,6 @@
+work
+.nextflow*
+*db
+results*
+test*
+originals
