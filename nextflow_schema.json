@@ -205,37 +205,37 @@
                 "annotation_bakta_trna": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip tRNA detection.",
+                    "description": "Perform tRNA detection.",
                     "hidden": true
                 },
                 "annotation_bakta_tmrna": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip tmRNA detection.",
+                    "description": "Perform tmRNA detection.",
                     "hidden": true
                 },
                 "annotation_bakta_rrna": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip rRNA detection.",
+                    "description": "Perform rRNA detection.",
                     "hidden": true
                 },
                 "annotation_bakta_ncrna": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip ncRNA detection.",
+                    "description": "Perform ncRNA detection.",
                     "hidden": true
                 },
                 "annotation_bakta_ncrnaregion": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip ncRNA region detection.",
+                    "description": "Perform ncRNA region detection.",
                     "hidden": true
                 },
                 "annotation_bakta_crispr": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip CRISPR array detection.",
+                    "description": "Perform CRISPR array detection.",
                     "hidden": true
                 },
                 "annotation_bakta_skipcds": {
@@ -247,25 +247,25 @@
                 "annotation_bakta_pseudo": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip pseudogene detection.",
+                    "description": "Perform pseudogene detection.",
                     "hidden": true
                 },
                 "annotation_bakta_skipsorf": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip sORF prediction.",
+                    "description": "Perform sORF prediction.",
                     "hidden": true
                 },
                 "annotation_bakta_gap": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip gap detection.",
+                    "description": "Perform gap detection.",
                     "hidden": true
                 },
                 "annotation_bakta_ori": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Skip origin of replication detection.",
+                    "description": "Perform origin of replication detection.",
                     "hidden": true
                 },
                 "annotation_bakta_activate_plot": {
