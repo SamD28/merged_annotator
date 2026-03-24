@@ -102,7 +102,7 @@
                 },
                 "vfdb_db": {
                     "type": "string",
-                    "default": "/data/pam/team230/sd28/scratch/secondment_162/dbs/vfdb/VFDB_setB_pro.dmnd",
+                    "default": "/data/pam/team162/sd28/scratch/dbs/vfdb/VFDB_setB_pro.dmnd",
                     "description": "Path to the VFDB virulence factor DIAMOND database (.dmnd).",
                     "fa_icon": "fas fa-file"
                 },
