@@ -13,7 +13,7 @@
             "properties": {
                 "manifest": {
                     "type": "string",
-                    "description": "Path to sample manifest file (TSV/CSV) listing genomes to annotate.",
+                    "description": "Path to sample manifest file (CSV) listing genomes to annotate with the headers ID,assembly.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "outdir": {
@@ -47,6 +47,12 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Run functional annotation subworkflow (EggNOG, KofamScan, dbCAN, VFDB).",
+                    "fa_icon": "fas fa-dna"
+                },
+                "mge_annotate": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run mobile genetic element (MGE) annotation subworkflow.",
                     "fa_icon": "fas fa-dna"
                 },
                 "cluster_proteome": {
@@ -110,6 +116,12 @@
                     "type": "string",
                     "default": "/data/pam/software/kofam_scan/",
                     "description": "Path to the KofamScan HMM profile database directory.",
+                    "fa_icon": "fas fa-folder"
+                },
+                "genomad_db": {
+                    "type": "string",
+                    "default": "/data/pam/software/genomad/genomad_db/genomad_db/",
+                    "description": "Path to the Genomad database directory.",
                     "fa_icon": "fas fa-folder"
                 }
             }
