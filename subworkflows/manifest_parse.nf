@@ -9,7 +9,7 @@ workflow MANIFEST_PARSE {
     main:
     Channel
         .fromPath( samplesheet )
-        .ifEmpty {exit 1, "Cannot find path file ${samplesheet}"}
+        .ifEmpty {error("Cannot find path file ${samplesheet}")}
         .splitCsv ( header:true, sep:',' )
         .map { create_assembly_channels(it) }
         .set { assemblies }
@@ -24,12 +24,20 @@ def create_assembly_channels(LinkedHashMap row) {
     def array = []
     def meta = [:]
 
+    // validate required columns
+    if ( !row.containsKey('ID') ) {
+        error("ERROR: Manifest is missing required column 'ID'")
+    }
+    if ( !row.containsKey('assembly') ) {
+        error("ERROR: Manifest is missing required column 'assembly'")
+    }
+
     //for bakta
     meta.ID = row.ID.replace('#', '_')
 
     // check short reads
     if ( !file(row.assembly).exists() ) {
-        exit 1, "ERROR: Please check input samplesheet -> Assembly file does not exist!\n${row.assembly}"
+        error("ERROR: Please check input samplesheet -> Assembly file does not exist!\n${row.assembly}")
     }
 
     def assembly = file(row.assembly)
@@ -38,7 +46,7 @@ def create_assembly_channels(LinkedHashMap row) {
     return array
 }
 
-// Function to get list of [ meta, assembly ]
+/* Function to get list of [ meta, assembly ]
 def create_annotations_channels(LinkedHashMap row) {
     def meta = [:]
 
@@ -46,6 +54,7 @@ def create_annotations_channels(LinkedHashMap row) {
     meta.ID = row.ID.replace('#', '_')
 
     def array = []
+    
     // check short reads
     if ( row.annotations ) {
         annotations = file(row.annotations)
@@ -54,3 +63,4 @@ def create_annotations_channels(LinkedHashMap row) {
     array = [ meta, annotations ]
     return array
 }
+*/

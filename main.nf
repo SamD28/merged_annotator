@@ -4,6 +4,7 @@ include { MANIFEST_PARSE   } from './subworkflows/manifest_parse.nf'
 include { ANNOTATION       } from './subworkflows/annotation.nf'
 include { ARG              } from './subworkflows/arg.nf'
 include { FUNC             } from './subworkflows/func.nf'
+include { MGE              } from './subworkflows/mge.nf'
 
 workflow {
     main:
@@ -39,6 +40,12 @@ workflow {
         FUNC(
             ch_new_annotation.faas,
             ch_new_annotation.gffs,
+        )
+    }
+
+    if (params.mge_annotate) {
+        MGE(
+            ch_new_annotation.faas
         )
     }
 }
