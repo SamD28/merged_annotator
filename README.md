@@ -8,8 +8,16 @@ dbCAN, VFDB), and optional ARG screening (AMRFinderPlus, fARGene, RGI, DeepARG, 
 
 ## Quick start
 
+First clone and then run
+
 ```bash
 nextflow run main.nf -profile standard --mode single --manifest samples.csv
+```
+
+or to run remove
+
+```bash
+nextflow run SamD28/merged_annotator -profile standard --mode single --manifest samples.csv
 ```
 
 The manifest is a CSV with at minimum two columns:
