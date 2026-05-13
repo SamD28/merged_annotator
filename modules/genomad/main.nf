@@ -1,7 +1,7 @@
 process GENOMAD {
     tag "${meta.ID}"
 
-    container 'quay.io/biocontainers/genomad:1.7.0--pyhdfd78af_0'
+    container 'quay.io/biocontainers/genomad:1.12.0--pyhdfd78af_0'
 
     input:
     tuple val(meta), path(faa)
