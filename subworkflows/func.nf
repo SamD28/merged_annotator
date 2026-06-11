@@ -38,10 +38,19 @@ workflow FUNC {
                         .map{ meta, faa -> faa}
     }
 
-    annotation_faas
-    | KOFAMSCAN & EGGNOGMAPPER & VFDB
+    if (!params.func_skip_eggnogmapper) {
+        EGGNOGMAPPER(annotation_faas)
+    }
 
-    if ( params.mode == 'single' || params.mode == 'pyrodigal' || params.mode == 'bakta' || params.mode == 'prokka') {
+    if (!params.func_skip_kofamscan) {
+        KOFAMSCAN(annotation_faas)
+    }
+
+    if (!params.func_skip_vfdb) {
+        VFDB(annotation_faas)
+    }
+
+    if ( params.mode == 'single' || params.mode == 'pyrodigal' || params.mode == 'bakta' || params.mode == 'prokka' && !params.func_skip_dbcan ) {
         linked_annotations = annotation_faas.join(annotation_gffs)
 
         RUNDBCAN_EASYSUBSTRATE(linked_annotations)
