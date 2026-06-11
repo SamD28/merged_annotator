@@ -784,6 +784,30 @@
             "fa_icon": "fas fa-sliders-h",
             "description": "Fine-grained parameters for EggNOG, KofamScan, VFDB, and dbCAN.",
             "properties": {
+                "func_skip_eggnogmapper": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip EggNOG-mapper in the functional annotation subworkflow.",
+                    "hidden": true
+                },
+                "func_skip_kofamscan": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip KofamScan in the functional annotation subworkflow.",
+                    "hidden": true
+                },
+                "func_skip_vfdb": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip VFDB in the functional annotation subworkflow.",
+                    "hidden": true
+                },
+                "func_skip_dbcan": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip dbCAN in the functional annotation subworkflow.",
+                    "hidden": true
+                },
                 "eggnog_search_mode": {
                     "type": "string",
                     "default": "diamond",
