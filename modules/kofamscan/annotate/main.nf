@@ -1,7 +1,5 @@
 process KOFAMSCAN {
     tag "${meta.ID}"
-
-    label 'process_medium'
     
     container 'quay.io/biocontainers/kofamscan:1.3.0--hdfd78af_2'
 

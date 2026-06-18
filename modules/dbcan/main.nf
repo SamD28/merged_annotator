@@ -34,8 +34,6 @@ process DBCAN {
 process RUNDBCAN_EASYSUBSTRATE {
     tag "$meta.ID"
 
-    label 'process_medium'
-
     container 'quay.io/biocontainers/dbcan:5.2.8--pyhdfd78af_0'
 
     input:
