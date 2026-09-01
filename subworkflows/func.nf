@@ -50,11 +50,11 @@ workflow FUNC {
         VFDB(annotation_faas)
     }
 
-    if ( params.mode == 'single' || params.mode == 'pyrodigal' || params.mode == 'bakta' || params.mode == 'prokka' && !params.func_skip_dbcan ) {
+    if ( params.mode in ['single', 'pyrodigal', 'bakta', 'prokka'] && !params.func_skip_dbcan ) {
         linked_annotations = annotation_faas.join(annotation_gffs)
 
         RUNDBCAN_EASYSUBSTRATE(linked_annotations)
     } else {
         DBCAN(annotation_faas)
     }
-    }
+}

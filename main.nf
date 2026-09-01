@@ -45,7 +45,11 @@ workflow {
 
     if (params.mge_annotate) {
         MGE(
-            ch_new_annotation.faas
+            ch_new_annotation.fastas
         )
+    }
+
+    workflow.onComplete {
+        NextflowTool.summary(workflow, params, log)
     }
 }
