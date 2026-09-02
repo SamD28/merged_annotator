@@ -40,7 +40,6 @@ process BAKTA_BAKTA {
         ${args} \\
         --threads ${task.cpus} \\
         --prefix ${prefix} \\
-        --locus-tag ${prefix} \\
         ${proteins_opt} \\
         ${prodigal_tf} \\
         --db ${db} \\

@@ -4,7 +4,7 @@ process GENOMAD {
     container 'quay.io/biocontainers/genomad:1.12.0--pyhdfd78af_0'
 
     input:
-    tuple val(meta), path(faa)
+    tuple val(meta), path(fasta)
 
     output:
     tuple val(meta), path(genomad_output)
@@ -14,7 +14,7 @@ process GENOMAD {
     """
     genomad end-to-end \\
         --cleanup \\
-        ${faa} \\
+        ${fasta} \\
         ${genomad_output} \\
         ${params.genomad_db}
     """

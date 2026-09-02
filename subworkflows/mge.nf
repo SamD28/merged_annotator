@@ -4,8 +4,8 @@ include { GENOMAD } from '../modules/genomad/main'
 
 workflow MGE {
     take:
-    annotation_faas
+    annotation_fastas
 
     main:
-    GENOMAD(annotation_faas)
+    GENOMAD(annotation_fastas)
 }
