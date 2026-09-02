@@ -49,7 +49,7 @@ workflow {
         )
     }
 
-    workflow.onComplete {
+    workflow.onComplete = {
         NextflowTool.summary(workflow, params, log)
     }
 }

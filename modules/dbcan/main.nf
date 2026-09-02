@@ -52,6 +52,7 @@ process RUNDBCAN_EASYSUBSTRATE {
     run_dbcan easy_substrate \\
         --mode protein \\
         --db_dir ${params.dbcan_db} \\
+        --threads ${task.cpus} \\
         --input_raw_data ${faa} \\
         --output_dir ${meta.ID}_dbcan \\
         --input_gff ${gff} \\

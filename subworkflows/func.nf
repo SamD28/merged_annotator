@@ -4,7 +4,7 @@ include { CLUSTER_SEQS;
           ALIGNMENT_SCORE               } from '../modules/mmseqs/cluster/main'
 include { KOFAMSCAN                     } from '../modules/kofamscan/annotate/main'
 include { EGGNOGMAPPER                  } from '../modules/eggnogmapper/main'
-include { DBCAN; RUNDBCAN_EASYSUBSTRATE } from '../modules/dbcan/main'
+include { RUNDBCAN_EASYSUBSTRATE } from '../modules/dbcan/main'
 include { VFDB                          } from '../modules/vfdb/main'
 
 workflow FUNC {
@@ -54,7 +54,5 @@ workflow FUNC {
         linked_annotations = annotation_faas.join(annotation_gffs)
 
         RUNDBCAN_EASYSUBSTRATE(linked_annotations)
-    } else {
-        DBCAN(annotation_faas)
-    }
+    } 
 }
